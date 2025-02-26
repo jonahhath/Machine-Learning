@@ -69,43 +69,41 @@
     <h3>Prediction:</h3>
     <div id="output"></div>
 
-    <section class="pyscript">
-        <script type="py">
-            import numpy as np
-            from pyscript import display
-            from pyweb import pydom
-    
-         
-            weights = np.array([0.5, 0.3, 0.3, 0.5, 
-                                -0.5, 0.8, 1.0, 0.0, 
-                                -1.0, -0.2, -0.2, -0.4, 
-                                0.7, -0.1, -0.4, 0.6])
+<section class="pyscript">
+    <script type="py">
+        import numpy as np
+        from pyscript import display
+        from pyweb import pydom
+
+        weights = np.array([0.1, 0.3, 0.4, 0.3, 
+                            -0.2, 0.5, 0.6, -0.1, 
+                            -0.5, -0.1, -0.1, -0.4, 
+                            0.8, -0.2, -0.4, 0.5])
+
+        bias = -0.3
+
+        def activation_function(z):
+            return np.where(z >= 0, 1, 0)
+
+        def predict(X_test):
+            linear_output = np.dot(X_test, weights) + bias
+            return activation_function(linear_output)
+
+        def classify(event):
+            inputs = [float(pydom[f"#input{i}"][0].value) for i in range(1, 17)]
+            X_test = np.array(inputs).flatten()
+
+            result = predict(X_test)
+
+            shape = "L" if result == 0 else "T"
+            pydom["div#output"].html = f"Predicted Shape: {shape}"
+
+        def reset_inputs(event):
+            for i in range(1, 17):
+                pydom[f"#input{i}"][0].value = "0"
             
-            bias = -0.6  # bias
-            
-         
-            def activation_function(z):
-                return np.where(z >= 0, 1, 0)
-    
-            def predict(X_test):
-                linear_output = np.dot(X_test, weights) + bias
-                return activation_function(linear_output)
-    
-            def classify(event):
-                inputs = [float(pydom[f"#input{i}"][0].value) for i in range(1, 17)]
-                X_test = np.array(inputs).flatten()  # Ensure shape matches weights
-    
-                result = predict(X_test)
-    
-                shape = "L" if result == 0 else "T"
-                pydom["div#output"].html = f"Predicted Shape: {shape}"
-            
-            def reset_inputs(event):
-                for i in range(1, 17):  # Reset all input fields to 0
-                    pydom[f"#input{i}"][0].value = "0"
-        
-                pydom["div#output"].html = ""
-        </script>
-    </section>    
+            pydom["div#output"].html = ""
+    </script>
+</section>   
 </body>
 </html>
