@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Perceptron Classifier - L vs T</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+
+    <py-config>
+        packages = ["numpy"]
+    </py-config>
+
+    <style>
+        table 
+        {
+            border-collapse: collapse;
+        }
+        td {
+            width: 30px;
+            height: 30px;
+            text-align: center;
+        }
+        input {
+            width: 30px;
+            text-align: center;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Perceptron Classifier for "L" and "T"</h2>
+    
+    <p>Enter 1s in the table to make a T or L:</p>
+
+    <table border="1">
+        <tbody>
+            <tr>
+                <td><input type="text" id="input1" value="0"></td>
+                <td><input type="text" id="input2" value="0"></td>
+                <td><input type="text" id="input3" value="0"></td>
+                <td><input type="text" id="input4" value="0"></td>
+            </tr>
+            <tr>
+                <td><input type="text" id="input5" value="0"></td>
+                <td><input type="text" id="input6" value="0"></td>
+                <td><input type="text" id="input7" value="0"></td>
+                <td><input type="text" id="input8" value="0"></td>
+            </tr>
+            <tr>
+                <td><input type="text" id="input9" value="0"></td>
+                <td><input type="text" id="input10" value="0"></td>
+                <td><input type="text" id="input11" value="0"></td>
+                <td><input type="text" id="input12" value="0"></td>
+            </tr>
+            <tr>
+                <td><input type="text" id="input13" value="0"></td>
+                <td><input type="text" id="input14" value="0"></td>
+                <td><input type="text" id="input15" value="0"></td>
+                <td><input type="text" id="input16" value="0"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <br>
+    <button py-click="classify" class="py-button">Classify</button>
+    <button py-click="reset_inputs" class="py-button">Reset</button>
+
+    <h3>Prediction:</h3>
+    <div id="output"></div>
+
+    <section class="pyscript">
+        <script type="py">
+            import numpy as np
+            from pyscript import display
+            from pyweb import pydom
+    
+         
+            weights = np.array([0.5, 0.3, 0.3, 0.5, 
+                                -0.5, 0.8, 1.0, 0.0, 
+                                -1.0, -0.2, -0.2, -0.4, 
+                                0.7, -0.1, -0.4, 0.6])
+            
+            bias = -0.6  # bias
+            
+         
+            def activation_function(z):
+                return np.where(z >= 0, 1, 0)
+    
+            def predict(X_test):
+                linear_output = np.dot(X_test, weights) + bias
+                return activation_function(linear_output)
+    
+            def classify(event):
+                inputs = [float(pydom[f"#input{i}"][0].value) for i in range(1, 17)]
+                X_test = np.array(inputs).flatten()  # Ensure shape matches weights
+    
+                result = predict(X_test)
+    
+                shape = "L" if result == 0 else "T"
+                pydom["div#output"].html = f"Predicted Shape: {shape}"
+            
+            def reset_inputs(event):
+                for i in range(1, 17):  # Reset all input fields to 0
+                    pydom[f"#input{i}"][0].value = "0"
+        
+                pydom["div#output"].html = ""
+        </script>
+    </section>    
+</body>
+</html>
